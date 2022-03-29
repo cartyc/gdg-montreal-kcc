@@ -1,0 +1,50 @@
+apiVersion: container.cnrm.cloud.google.com/v1beta1
+kind: ContainerCluster
+metadata:
+  name: gdg-autopilot-cluster
+  annotations:
+    cnrm.cloud.google.com/project-id: awesome-demo-project # kpt-set: ${project-id}
+    cnrm.cloud.google.com/blueprint: 'kpt-fn-live'
+spec:
+  description: An autopilot cluster.
+  enableAutopilot: true
+  location: northamerica-northeast1 # kpt-set: ${location}
+  privateClusterConfig:
+    enablePrivateEndpoint: false
+    enablePrivateNodes: true
+    masterIpv4CidrBlock: 172.16.0.0/28
+  networkRef:
+    name: gdg-autopilot-net
+  subnetworkRef:
+    name: gdg-autopilot-subnet
+  releaseChannel:
+    channel: REGULAR
+---
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeNetwork
+metadata:
+  name: gdg-autopilot-net
+  annotations:
+    cnrm.cloud.google.com/blueprint: 'kpt-fn'
+    cnrm.cloud.google.com/project-id: awesome-demo-project # kpt-set: ${project-id}
+spec:
+  routingMode: REGIONAL
+  autoCreateSubnetworks: false
+---
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeSubnetwork
+metadata:
+  name: gdg-autopilot-subnet
+  annotations:
+    cnrm.cloud.google.com/blueprint: 'kpt-fn'
+    cnrm.cloud.google.com/project-id: awesome-demo-project # kpt-set: ${project-id}
+spec:
+  ipCidrRange: 10.5.0.0/16
+  region: northamerica-northeast1 # kpt-set: ${location}
+  networkRef:
+    name: gdg-autopilot-net
+  secondaryIpRange:
+  - rangeName: servicesrange
+    ipCidrRange: 10.6.0.0/16
+  - rangeName: clusterrange
+    ipCidrRange: 10.7.0.0/16

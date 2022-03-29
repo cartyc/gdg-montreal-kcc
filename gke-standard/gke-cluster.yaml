@@ -1,0 +1,104 @@
+apiVersion: container.cnrm.cloud.google.com/v1beta1
+kind: ContainerCluster
+metadata:
+  labels:
+    availability: high
+    target-audience: production
+  name: gdg-demo-cluster # kpt-set: ${cluster-name}
+  annotations:
+    cnrm.cloud.google.com/project-id: awesome-demo-project # kpt-set: ${project-id}
+    cnrm.cloud.google.com/blueprint: 'kpt-fn'
+spec:
+  description: A large regional VPC-native cluster set up with special networking considerations.
+  location: northamerica-northeast1 # kpt-set: ${location}
+  initialNodeCount: 1
+  defaultMaxPodsPerNode: 16
+  workloadIdentityConfig:
+    # Workload Identity supports only a single namespace based on your project name.
+    # Replace ${PROJECT_ID?} below with your project ID.
+    workloadPool: awesome-demo-project.svc.id.goog # kpt-set: ${project-id}.svc.id.goog
+  networkingMode: VPC_NATIVE
+  networkRef:
+    name: containercluster-dep-vpcnative
+  subnetworkRef:
+    name: containercluster-dep-vpcnative
+  ipAllocationPolicy:
+    servicesSecondaryRangeName: servicesrange
+    clusterSecondaryRangeName: clusterrange
+  privateClusterConfig:
+    enablePrivateEndpoint: false
+    enablePrivateNodes: true
+    masterIpv4CidrBlock: 172.16.0.0/28
+  clusterAutoscaling:
+    enabled: true
+    autoscalingProfile: BALANCED
+    resourceLimits:
+    - resourceType: cpu
+      maximum: 100
+      minimum: 10
+    - resourceType: memory
+      maximum: 1000
+      minimum: 100
+  maintenancePolicy:
+    dailyMaintenanceWindow:
+      startTime: 00:00
+  releaseChannel:
+    channel: STABLE
+  notificationConfig:
+    pubsub:
+      enabled: true
+      topicRef:
+        name: containercluster-dep-vpcnative
+  enableBinaryAuthorization: true
+  enableIntranodeVisibility: true
+  enableShieldedNodes: true
+  addonsConfig:
+    networkPolicyConfig:
+      disabled: false
+    dnsCacheConfig:
+      enabled: true
+    configConnectorConfig:
+      enabled: false
+  networkPolicy:
+    enabled: true
+  podSecurityPolicyConfig:
+    enabled: true
+  verticalPodAutoscaling:
+    enabled: true
+---
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeNetwork
+metadata:
+  name: containercluster-dep-vpcnative
+  annotations:
+    cnrm.cloud.google.com/blueprint: 'kpt-fn'
+    cnrm.cloud.google.com/project-id: awesome-demo-project # kpt-set: ${project-id}
+spec:
+  routingMode: REGIONAL
+  autoCreateSubnetworks: false
+---
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeSubnetwork
+metadata:
+  name: containercluster-dep-vpcnative
+  annotations:
+    cnrm.cloud.google.com/blueprint: 'kpt-fn'
+    cnrm.cloud.google.com/project-id: awesome-demo-project # kpt-set: ${project-id}
+spec:
+  ipCidrRange: 10.2.0.0/16
+  region: northamerica-northeast1 # kpt-set: ${location}
+  networkRef:
+    name: containercluster-dep-vpcnative
+  secondaryIpRange:
+  - rangeName: servicesrange
+    ipCidrRange: 10.3.0.0/16
+  - rangeName: clusterrange
+    ipCidrRange: 10.4.0.0/16
+---
+apiVersion: pubsub.cnrm.cloud.google.com/v1beta1
+kind: PubSubTopic
+metadata:
+  name: containercluster-dep-vpcnative
+  annotations:
+    cnrm.cloud.google.com/blueprint: 'kpt-fn'
+    cnrm.cloud.google.com/project-id: awesome-demo-project # kpt-set: ${project-id}

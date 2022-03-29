@@ -2,7 +2,10 @@
 
 In this demonstration repo we will deploy a GKE Standard cluster and a GKE Autopilot cluster to a GCP project using [Kubernetes Config Connector](https://cloud.google.com/config-connector/docs/overview) and [Config Controller](https://cloud.google.com/anthos-config-management/docs/concepts/config-controller-overview).
 
-This guide assumes you have access to a Google Cloud and can create new projects with an attached billing id.
+This guide assumes you have access to a Google Cloud and can create new projects with an attached billing id and you will be running the commands from Cloud Shell. If you're running things locally you'll need the following tools
+- [kpt](https://kpt.dev/installation/)
+- [kubectl](https://kubernetes.io/docs/tasks/tools/)
+- [gcloud cli](https://cloud.google.com/sdk/docs/install)
 
 ## Create a Config Controller Instance.
 

@@ -24,14 +24,14 @@ gcloud services enable krmapihosting.googleapis.com \
 
 ### Create Config Controller
 ```
-gcloud anthos config controller create guardrails-controller \
+gcloud anthos config controller create gdg-demo \
     --location=us-east1
 ```
 
 ### Authenticate with the Instance
 
 ```
-gcloud anthos config controller get-credentials guardrails-controller \
+gcloud anthos config controller get-credentials gdg-demo \
     --location us-east1
 ```
 

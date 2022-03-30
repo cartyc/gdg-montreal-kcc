@@ -6,7 +6,7 @@ KCC Deployment of a Private GKE Autopilot Cluster
 ## Usage
 
 ### Fetch the package
-`kpt pkg get git@github.com:cartyc/gdg-montreal-kcc.git/gke-autopolot{@VERSION} gke-autopilot`
+`kpt pkg get git@github.com:cartyc/gdg-montreal-kcc.git/gke-autopilot{@VERSION} gke-autopilot`
 Details: https://kpt.dev/reference/cli/pkg/get/
 
 ### View package content

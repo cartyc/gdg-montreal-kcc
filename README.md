@@ -35,7 +35,7 @@ gcloud anthos config controller create gdg-demo \
 
 ```
 gcloud anthos config controller get-credentials gdg-demo \
-    --location us-east1
+    --location northamerica-northeast1
 ```
 
 ### Grant Permissions
